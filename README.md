@@ -45,8 +45,9 @@ git clone https://github.com/YOUR_USERNAME/f1-3d-showcase.git
 cd f1-3d-showcase
 npm install
 npm run dev
+# open http://localhost:5173
 ```
 Moin Syed — 🔗 LinkedIn: https://www.linkedin.com/in/moin-syed-cs/
 
-# open http://localhost:5173
+
 
