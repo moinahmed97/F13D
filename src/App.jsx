@@ -1,6 +1,8 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Environment, Grid, Center, ContactShadows } from '@react-three/drei'
-import { Suspense, useState, useRef } from 'react'
+import { Suspense, useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence, useAnimation } from 'framer-motion'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
 import F1 from './F1'
 
 function DynamicGrid({ rolling, ...props }) {
@@ -19,6 +21,19 @@ function DynamicGrid({ rolling, ...props }) {
 
 export default function App() {
   const [exploded, setExploded] = useState(false)
+  const [showStats, setShowStats] = useState(false)
+
+  // Keyboard listener for stats toggle
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 's' || e.key === 'S') {
+        setShowStats(!showStats)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [showStats])
 
   return (
     <div style={{ height: '100vh', width: '100vw', background: '#15151a' }}>
@@ -32,7 +47,156 @@ export default function App() {
         >
           {exploded ? "ASSEMBLE" : "DISASSEMBLE"}
         </button>
+
+        <button
+          onClick={() => setShowStats(!showStats)}
+          className="stats-button"
+          tabIndex={0}
+        >
+          STATS
+        </button>
       </div>
+
+      {/* Advanced Stats Dashboard */}
+      <AnimatePresence>
+        {showStats && (
+          <motion.div
+            className="stats-sidebar"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "tween", duration: 0.4, ease: "easeOut" }}
+          >
+            <div className="stats-content">
+              <motion.div
+                className="stats-header"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <h2>F1 PERFORMANCE ANALYTICS</h2>
+                <p>Real-time telemetry and specifications</p>
+              </motion.div>
+
+              {/* Performance Metrics Chart */}
+              <motion.div
+                className="chart-section"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <h3>Performance Metrics</h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={[
+                    { name: 'Top Speed', value: 350, max: 400 },
+                    { name: 'Acceleration', value: 2.0, max: 3.0 },
+                    { name: 'Horsepower', value: 1000, max: 1100 },
+                    { name: 'Weight', value: 798, max: 850 }
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,255,204,0.2)" />
+                    <XAxis dataKey="name" stroke="#00ffcc" fontSize={12} />
+                    <YAxis stroke="#00ffcc" fontSize={12} />
+                    <Tooltip
+                      contentStyle={{
+                        background: 'rgba(0,0,0,0.9)',
+                        border: '1px solid #00ffcc',
+                        borderRadius: '8px',
+                        color: '#00ffcc'
+                      }}
+                    />
+                    <Bar dataKey="value" fill="#00ffcc" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </motion.div>
+
+              {/* Engine Specifications Radar */}
+              <motion.div
+                className="chart-section"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <h3>Engine Characteristics</h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <RadarChart data={[
+                    { subject: 'Power', A: 100, fullMark: 100 },
+                    { subject: 'Efficiency', A: 85, fullMark: 100 },
+                    { subject: 'Torque', A: 95, fullMark: 100 },
+                    { subject: 'Reliability', A: 90, fullMark: 100 },
+                    { subject: 'Weight', A: 75, fullMark: 100 },
+                    { subject: 'Tech Level', A: 98, fullMark: 100 }
+                  ]}>
+                    <PolarGrid stroke="rgba(0,255,204,0.2)" />
+                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#00ffcc', fontSize: 11 }} />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: '#00ffcc', fontSize: 10 }} />
+                    <Radar name="Engine" dataKey="A" stroke="#00ffcc" fill="#00ffcc" fillOpacity={0.3} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </motion.div>
+
+              {/* Historical Performance Line */}
+              <motion.div
+                className="chart-section"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8 }}
+              >
+                <h3>Season Performance Trend</h3>
+                <ResponsiveContainer width="100%" height={180}>
+                  <LineChart data={[
+                    { race: 'Monaco', points: 25 },
+                    { race: 'Silverstone', points: 18 },
+                    { race: 'Spa', points: 15 },
+                    { race: 'Monza', points: 25 },
+                    { race: 'Singapore', points: 12 },
+                    { race: 'Abu Dhabi', points: 18 }
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,255,204,0.2)" />
+                    <XAxis dataKey="race" stroke="#00ffcc" fontSize={10} />
+                    <YAxis stroke="#00ffcc" fontSize={10} />
+                    <Tooltip
+                      contentStyle={{
+                        background: 'rgba(0,0,0,0.9)',
+                        border: '1px solid #00ffcc',
+                        borderRadius: '8px',
+                        color: '#00ffcc'
+                      }}
+                    />
+                    <Line type="monotone" dataKey="points" stroke="#00ffcc" strokeWidth={3} dot={{ fill: '#00ffcc', strokeWidth: 2, r: 4 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </motion.div>
+
+              {/* Key Stats Cards */}
+              <motion.div
+                className="stats-cards"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0 }}
+              >
+                {[
+                  { value: "23", label: "Race Wins", icon: "🏆" },
+                  { value: "7", label: "Championships", icon: "👑" },
+                  { value: "350+", label: "Top Speed (km/h)", icon: "⚡" },
+                  { value: "1000+", label: "Peak HP", icon: "💪" }
+                ].map((stat, index) => (
+                  <motion.div
+                    key={stat.label}
+                    className="stat-card-compact"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.2 + (index * 0.1) }}
+                  >
+                    <div className="card-icon">{stat.icon}</div>
+                    <div className="card-value">{stat.value}</div>
+                    <div className="card-label">{stat.label}</div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     
 
