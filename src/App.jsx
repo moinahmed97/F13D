@@ -63,6 +63,7 @@ export default function App() {
       <div className="ui-overlay">
         <button
           onClick={() => setExploded(!exploded)}
+          onTouchStart={() => setExploded(!exploded)}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setExploded(!exploded) }}
           className="explode-button"
           tabIndex={0}
@@ -72,6 +73,7 @@ export default function App() {
 
         <button
           onClick={() => setShowStats(!showStats)}
+          onTouchStart={() => setShowStats(!showStats)}
           className="stats-button"
           tabIndex={0}
         >
@@ -96,6 +98,29 @@ export default function App() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
+                <button
+                  onClick={() => setShowStats(false)}
+                  onTouchStart={() => setShowStats(false)}
+                  className="close-button"
+                  style={{
+                    position: 'absolute',
+                    top: '20px',
+                    right: '20px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid #00ffcc',
+                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
+                    color: '#00ffcc',
+                    fontSize: '20px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  ×
+                </button>
                 <h2>F1 PERFORMANCE ANALYTICS</h2>
                 <p>Real-time telemetry and specifications</p>
 
