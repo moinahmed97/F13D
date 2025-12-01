@@ -22,6 +22,26 @@ function DynamicGrid({ rolling, ...props }) {
 export default function App() {
   const [exploded, setExploded] = useState(false)
   const [showStats, setShowStats] = useState(false)
+  // Season data for Lewis Hamilton 2023
+  const seasonData = {
+    driver: 'Lewis Hamilton',
+    team: 'Mercedes',
+    achievements: { wins: 0, podiums: 2, championships: 0 },
+    performance: [
+      { race: 'Bahrain', points: 10, position: 3 },
+      { race: 'Saudi Arabia', points: 8, position: 4 },
+      { race: 'Australia', points: 18, position: 2 },
+      { race: 'Azerbaijan', points: 15, position: 3 },
+      { race: 'Miami', points: 12, position: 4 },
+      { race: 'Monaco', points: 4, position: 7 },
+      { race: 'Spain', points: 25, position: 1 },
+      { race: 'Canada', points: 18, position: 2 },
+      { race: 'Austria', points: 15, position: 3 },
+      { race: 'Britain', points: 10, position: 5 },
+      { race: 'Hungary', points: 12, position: 4 },
+      { race: 'Belgium', points: 6, position: 6 }
+    ]
+  }
 
   // Keyboard listener for stats toggle
   useEffect(() => {
@@ -34,6 +54,8 @@ export default function App() {
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [showStats])
+
+  const currentSeasonData = seasonData
 
   return (
     <div style={{ height: '100vh', width: '100vw', background: '#15151a' }}>
@@ -76,6 +98,11 @@ export default function App() {
               >
                 <h2>F1 PERFORMANCE ANALYTICS</h2>
                 <p>Real-time telemetry and specifications</p>
+
+                <div className="season-info">
+                  <h4>{currentSeasonData.driver} - {currentSeasonData.team}</h4>
+                  <p>Season 2023 Performance Data</p>
+                </div>
               </motion.div>
 
               {/* Performance Metrics Chart */}
@@ -143,14 +170,7 @@ export default function App() {
               >
                 <h3>Season Performance Trend</h3>
                 <ResponsiveContainer width="100%" height={180}>
-                  <LineChart data={[
-                    { race: 'Monaco', points: 25 },
-                    { race: 'Silverstone', points: 18 },
-                    { race: 'Spa', points: 15 },
-                    { race: 'Monza', points: 25 },
-                    { race: 'Singapore', points: 12 },
-                    { race: 'Abu Dhabi', points: 18 }
-                  ]}>
+                  <LineChart data={currentSeasonData.performance}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,255,204,0.2)" />
                     <XAxis dataKey="race" stroke="#00ffcc" fontSize={10} />
                     <YAxis stroke="#00ffcc" fontSize={10} />
@@ -175,8 +195,8 @@ export default function App() {
                 transition={{ delay: 1.0 }}
               >
                 {[
-                  { value: "23", label: "Race Wins", icon: "🏆" },
-                  { value: "7", label: "Championships", icon: "👑" },
+                  { value: "0", label: "Race Wins", icon: "🏆" },
+                  { value: "0", label: "Championships", icon: "👑" },
                   { value: "350+", label: "Top Speed (km/h)", icon: "⚡" },
                   { value: "1000+", label: "Peak HP", icon: "💪" }
                 ].map((stat, index) => (
