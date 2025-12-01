@@ -1,7 +1,21 @@
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Environment, Grid, Center, ContactShadows } from '@react-three/drei'
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useRef } from 'react'
 import F1 from './F1'
+
+function DynamicGrid({ rolling, ...props }) {
+  const gridRef = useRef(null)
+  useFrame((_, delta) => {
+    if (!gridRef.current || !rolling) return
+    const material = gridRef.current.material
+    if (material && material.uniforms && material.uniforms.uTime) {
+      material.uniforms.uTime.value += delta * 10
+    } else {
+      gridRef.current.position.z = (gridRef.current.position.z - delta * 5) % 1
+    }
+  })
+  return <Grid ref={gridRef} {...props} />
+}
 
 export default function App() {
   const [exploded, setExploded] = useState(false)
@@ -9,16 +23,20 @@ export default function App() {
   return (
     <div style={{ height: '100vh', width: '100vw', background: '#15151a' }}>
       {/* The UI Overlay */}
-      <div style={{ position: 'absolute', top: 20, left: 20, zIndex: 10 }}>
-        <button 
+      <div className="ui-overlay">
+        <button
           onClick={() => setExploded(!exploded)}
-          style={{ padding: '12px 24px', fontSize: '16px', cursor: 'pointer', background: '#00ffcc', border: 'none', borderRadius: '4px' }}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setExploded(!exploded) }}
+          className="explode-button"
+          tabIndex={0}
         >
           {exploded ? "ASSEMBLE" : "DISASSEMBLE"}
         </button>
       </div>
 
-      <Canvas camera={{ position: [5, 4, 6], fov: 45 }}>
+    
+
+      <Canvas camera={{ position: [5, 4, 6], fov: 50 }}>
         {/* 1. Atmosphere */}
         <color attach="background" args={['#15151a']} />
         <fog attach="fog" args={['#15151a', 10, 25]} />
@@ -29,7 +47,8 @@ export default function App() {
         <Environment preset="city" /> 
 
         {/* 3. Grid (With pointerEvents="none" so you can click the car!) */}
-        <Grid 
+        <DynamicGrid 
+          rolling={!exploded}
           pointerEvents="none"
           position={[0, -0.66, 0]} 
           args={[30, 30]} 
@@ -43,9 +62,9 @@ export default function App() {
         />
 
         <Suspense fallback={null}>
-          <Center top> 
-             <F1 exploded={exploded} />
-          </Center>
+            <Center>
+              <F1 exploded={exploded} position={[0, -0.66, 0]} />
+            </Center>
         </Suspense>
         
         <OrbitControls 
