@@ -72,4 +72,4 @@ npm run dev
 
 ---
 
-**Built by [Moin Syed](https://www.linkedin.com/in/moin-syed-cs/)**
+**Built by [Moin Ahmed Syed](https://www.linkedin.com/in/moin-syed-cs/)**
